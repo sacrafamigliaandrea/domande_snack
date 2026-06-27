@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPad · Alfabetizzazione digitale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Palette sperimentale "Aurora" — fuori dai brand ufficiali */
+    --cream:#FBF7F1;
+    --ink:#241A37;
+    --ink-soft:#5A4E6E;
+    --violet-deep:#1C1140;
+    --violet:#3A1D6E;
+    --teal:#13B8A6;
+    --teal-deep:#0E8C7F;
+    --coral:#FF7A66;
+    --coral-deep:#F25C44;
+    --amber:#F3B23C;
+    --card:#FFFFFF;
+    --line:rgba(36,26,55,.10);
+    --shadow:0 18px 50px -22px rgba(28,17,64,.45);
+    --shadow-sm:0 6px 18px -10px rgba(28,17,64,.35);
+    --sidebar-w:288px;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Atkinson Hyperlegible',system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 85% -10%, rgba(19,184,166,.10), transparent 60%),
+      radial-gradient(900px 600px at 110% 100%, rgba(255,122,102,.10), transparent 55%),
+      var(--cream);
+    font-size:18px;
+    line-height:1.6;
+    display:flex;
+    height:100vh;
+    overflow:hidden;
+    padding:16px;
+    gap:16px;
+  }
+  h1,h2,h3,.brand-title,.btn-label,.topbar-title{font-family:'Lexend',sans-serif}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:var(--sidebar-w);
+    flex:0 0 var(--sidebar-w);
+    background:linear-gradient(168deg,var(--violet-deep),var(--violet) 70%,#4a2486);
+    color:#fff;
+    height:100%;
+    border-radius:24px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    z-index:20;
+  }
+  .brand{
+    padding:20px 20px 16px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+  .brand-badge{
+    width:52px;height:52px;border-radius:14px;flex:0 0 52px;
+    background:#fff;padding:5px;
+    display:grid;place-items:center;
+    box-shadow:0 8px 20px -10px rgba(0,0,0,.5);
+  }
+  .brand-badge img{width:100%;height:100%;object-fit:contain;border-radius:9px;display:block}
+  .brand-text small{
+    display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(255,255,255,.62);font-family:'Lexend',sans-serif;font-weight:500;
+  }
+  .brand-title{font-size:20px;font-weight:700;line-height:1.15}
+
+  .nav-scroll{flex:1;min-height:0;overflow-y:auto;padding:14px 12px 28px}
+  .nav-scroll::-webkit-scrollbar{width:8px}
+  .nav-scroll::-webkit-scrollbar-track{background:transparent}
+  .nav-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.20);border-radius:9px;border:2px solid transparent;background-clip:padding-box}
+  .nav-scroll{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent}
+  .nav-group-label{
+    font-family:'Lexend',sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);
+    padding:16px 14px 8px;
+  }
+  .nav-btn{
+    width:100%;text-align:left;border:0;cursor:pointer;
+    display:flex;align-items:center;gap:13px;
+    padding:12px 14px;margin:4px 0;border-radius:14px;
+    background:transparent;color:rgba(255,255,255,.82);
+    font-size:16px;min-height:52px;
+    transition:background .18s ease,transform .12s ease,color .18s ease;
+  }
+  .nav-btn .ico{flex:0 0 26px;width:26px;height:26px;display:grid;place-items:center;opacity:.92}
+  .nav-btn .ico svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .nav-meta{display:flex;align-items:center;gap:7px;margin-left:auto;flex:0 0 auto}
+  .nav-btn .num{
+    font-family:'Lexend',sans-serif;font-size:12px;font-weight:600;
+    color:rgba(255,255,255,.45);
+  }
+  .seen-ico{display:none;width:18px;height:18px;border-radius:50%;background:var(--teal);place-items:center}
+  .seen-ico svg{width:13px;height:13px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .nav-btn.is-seen .seen-ico{display:grid}
+  .btn-label{font-weight:500;flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .guide-tag{
+    font-family:'Lexend',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:#fff;background:rgba(255,255,255,.18);
+    padding:2px 7px;border-radius:999px;
+  }
+  .nav-btn.active .guide-tag{background:rgba(255,255,255,.28)}
+  .guide-tag.special{background:linear-gradient(120deg,rgba(19,184,166,.55),rgba(255,122,102,.55))}
+  .nav-btn:hover{background:rgba(255,255,255,.10);color:#fff;transform:translateX(2px)}
+  .nav-btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+  .nav-btn.active{
+    background:linear-gradient(120deg,var(--teal),var(--coral));
+    color:#fff;box-shadow:0 12px 26px -12px rgba(255,122,102,.8);
+  }
+  .nav-btn.active .num{color:rgba(255,255,255,.85)}
+  .nav-btn.active .ico{opacity:1}
+
+  .sidebar-footer{
+    flex:0 0 auto;
+    padding:14px 18px 16px;
+    border-top:1px solid rgba(255,255,255,.12);
+    display:flex;align-items:center;gap:11px;
+    background:rgba(0,0,0,.12);
+  }
+  .sidebar-footer .sf-dot{
+    width:34px;height:34px;border-radius:10px;flex:0 0 34px;
+    background:linear-gradient(135deg,var(--teal),var(--coral));
+    display:grid;place-items:center;
+  }
+  .sidebar-footer .sf-dot svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .sf-text small{
+    display:block;font-family:'Lexend',sans-serif;font-size:10px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);
+  }
+  .sf-text .sf-name{font-family:'Lexend',sans-serif;font-size:15px;font-weight:600;color:#fff;line-height:1.2}
+  .sf-text .sf-school{font-size:12px;color:rgba(255,255,255,.62);line-height:1.3}
+
+  /* ---------- MAIN ---------- */
+  .main{
+    flex:1;min-width:0;height:100%;
+    display:flex;flex-direction:column;overflow:hidden;
+    background:var(--card);border-radius:24px;border:1px solid var(--line);
+    box-shadow:var(--shadow-sm);
+  }
+  .topbar{
+    flex:0 0 auto;z-index:10;
+    background:rgba(251,247,241,.7);
+    border-bottom:1px solid var(--line);
+    padding:14px 26px;display:flex;align-items:center;gap:16px;
+    border-radius:24px 24px 0 0;
+  }
+  .topbar .chip{
+    font-family:'Lexend',sans-serif;font-weight:600;font-size:13px;
+    color:#fff;background:linear-gradient(120deg,var(--violet),var(--teal-deep));
+    padding:6px 13px;border-radius:999px;letter-spacing:.02em;
+  }
+  .topbar-title{font-size:21px;font-weight:600;line-height:1.15}
+  .topbar-sub{color:var(--ink-soft);font-size:14px}
+  .topbar .spacer{flex:1}
+  .topbar-nav{display:flex;gap:10px;flex:0 0 auto}
+  .topbar-nav button{
+    font-family:'Lexend',sans-serif;font-weight:600;font-size:14px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--violet);
+    padding:10px 16px;border-radius:13px;min-height:46px;
+    display:flex;align-items:center;gap:8px;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s;
+  }
+  .topbar-nav button:hover:not(:disabled){transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+  .topbar-nav button:disabled{opacity:.32;cursor:default}
+  .topbar-nav button svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .topbar-nav button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+  .stage{flex:1;min-height:0;padding:24px 28px;width:100%}
+  .lesson{
+    height:100%;
+    display:grid;
+    grid-template-columns:calc((100vh - 190px) * 9 / 16) minmax(0,1fr);
+    gap:30px;align-items:stretch;
+  }
+  .lesson[hidden]{display:none}
+
+  /* ---------- Galleria video (sezione speciale) ---------- */
+  .gallery{height:100%;display:flex;flex-direction:column;min-height:0}
+  .gallery[hidden]{display:none}
+  .gallery-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+  .gallery-frame{max-width:100%;margin:0 auto}
+  .gallery-frame.h{width:min(100%, calc((100vh - 250px) * 16 / 9));aspect-ratio:16/9}
+  .gallery-frame.v{height:calc(100vh - 250px);aspect-ratio:9/16;max-width:100%}
+  .gallery-frame iframe{display:block;width:100%;height:100%;border:0;border-radius:var(--radius);box-shadow:var(--shadow);background:#000}
+  .gallery-nav{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:12px;padding-top:18px;flex-wrap:wrap;
+  }
+  .gallery-dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .gallery-dot{
+    width:42px;height:42px;border-radius:12px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink-soft);
+    font-family:'Lexend',sans-serif;font-weight:600;font-size:15px;
+    transition:transform .12s,box-shadow .18s,background .18s,color .18s;
+  }
+  .gallery-dot:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .gallery-dot.active{background:linear-gradient(120deg,var(--teal),var(--coral));color:#fff;border-color:transparent}
+  .gallery-dot:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+  .gallery-arrow{
+    width:46px;height:46px;border-radius:13px;cursor:pointer;flex:0 0 auto;
+    border:1px solid var(--line);background:#fff;color:var(--violet);
+    display:grid;place-items:center;transition:transform .12s,box-shadow .18s;
+  }
+  .gallery-arrow:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .gallery-arrow svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .gallery-arrow:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+  /* video a sinistra — niente bande nere, riempie l'altezza disponibile */
+  .video-wrap{height:100%;min-height:0;display:flex;flex-direction:column}
+  .video-wrap[hidden]{display:none}
+  .video-frame{
+    flex:1;min-height:0;display:flex;align-items:center;justify-content:center;
+  }
+  .video-frame video{
+    max-height:100%;max-width:100%;width:auto;height:auto;display:block;
+    border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+  .video-meta{
+    flex:0 0 auto;margin-top:12px;text-align:center;color:var(--ink-soft);font-size:14px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .video-meta svg{width:18px;height:18px;stroke:var(--teal-deep);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* pannello per le schede senza video */
+  .guide-panel{
+    height:100%;border-radius:var(--radius);
+    background:linear-gradient(160deg,rgba(58,29,110,.06),rgba(19,184,166,.10));
+    border:1.5px dashed rgba(58,29,110,.28);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    text-align:center;padding:24px;
+  }
+  .guide-panel[hidden]{display:none}
+  .gp-ico{width:88px;height:88px;border-radius:24px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--violet),var(--teal-deep));box-shadow:var(--shadow)}
+  .gp-ico svg{width:46px;height:46px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .gp-tag{font-family:'Lexend',sans-serif;font-weight:600;font-size:14px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--violet)}
+  .gp-text{color:var(--ink-soft);font-size:16px;line-height:1.5}
+
+  .text-card .source{
+    margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:14px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;
+  }
+  .text-card .source svg{width:18px;height:18px;stroke:var(--teal-deep);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:0 0 18px}
+
+  /* testo a destra — scorre internamente solo se troppo lungo */
+  .text-card{
+    height:100%;overflow-y:auto;
+    background:var(--card);border-radius:var(--radius);
+    padding:6px 30px 6px 4px;
+    scrollbar-width:thin;scrollbar-color:rgba(36,26,55,.22) transparent;
+  }
+  .text-card::-webkit-scrollbar{width:8px}
+  .text-card::-webkit-scrollbar-thumb{background:rgba(36,26,55,.18);border-radius:9px}
+  .text-card .eyebrow{
+    font-family:'Lexend',sans-serif;font-weight:600;font-size:13px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--coral-deep);
+    display:flex;align-items:center;gap:9px;margin-bottom:10px;
+  }
+  .text-card .eyebrow svg{width:20px;height:20px;stroke:var(--coral-deep);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .text-card h2{font-size:27px;font-weight:700;line-height:1.16;margin-bottom:6px;color:var(--ink)}
+  .text-card .lead{font-size:18px;color:var(--ink-soft);margin-bottom:18px}
+  .text-card h3{
+    font-size:18px;font-weight:600;color:var(--violet);
+    margin:20px 0 9px;display:flex;align-items:center;gap:9px;
+  }
+  .text-card h3 svg{width:20px;height:20px;stroke:var(--teal-deep);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .text-card p{margin-bottom:14px}
+  .text-card ul{list-style:none;margin:6px 0 18px}
+  .text-card li{position:relative;padding-left:30px;margin-bottom:11px}
+  .text-card li::before{
+    content:"";position:absolute;left:6px;top:11px;width:9px;height:9px;border-radius:3px;
+    background:linear-gradient(135deg,var(--teal),var(--coral));
+  }
+  .text-card li b{color:var(--ink)}
+  .tip{
+    margin-top:24px;padding:16px 18px;border-radius:14px;
+    background:linear-gradient(120deg,rgba(19,184,166,.10),rgba(255,122,102,.10));
+    border:1px solid rgba(19,184,166,.28);
+    display:flex;gap:13px;align-items:flex-start;
+  }
+  .tip svg{flex:0 0 24px;width:24px;height:24px;stroke:var(--amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
+  .tip b{font-family:'Lexend',sans-serif;color:var(--violet);display:block;margin-bottom:2px;font-size:15px}
+  .tip span{font-size:16px;color:var(--ink-soft)}
+
+  /* ---------- Mobile toggle ---------- */
+  .menu-toggle{display:none}
+
+  @media (max-width:980px){
+    body{flex-direction:column;height:auto;overflow:auto;padding:0;gap:0}
+    .main{height:auto;overflow:visible;border-radius:0;border:0}
+    .topbar{position:sticky;top:0;backdrop-filter:saturate(1.4) blur(10px);border-radius:0}
+    .stage{flex:none;min-height:0;overflow:visible;padding:20px 18px 40px}
+    .lesson{height:auto;grid-template-columns:1fr;gap:22px}
+    .video-wrap{height:auto}
+    .video-frame{display:block}
+    .video-frame video{max-height:72vh;margin:0 auto}
+    .guide-panel{height:auto;min-height:230px}
+    .text-card{height:auto;overflow:visible;padding:4px}
+    .gallery{height:auto}
+    .gallery-stage{display:block}
+    .gallery-frame.h{width:100%}
+    .gallery-frame.v{height:auto;width:min(100%,300px)}
+    .topbar-nav button span.lbl{display:none}
+  }
+  @media (max-width:860px){
+    .sidebar{
+      position:fixed;left:0;top:0;height:100vh;width:84vw;max-width:320px;
+      border-radius:0;
+      transform:translateX(-104%);transition:transform .28s ease;
+    }
+    .sidebar.open{transform:translateX(0)}
+    .menu-toggle{
+      display:inline-grid;place-items:center;width:46px;height:46px;border-radius:12px;
+      border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--violet);
+    }
+    .menu-toggle svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .scrim{
+      display:none;position:fixed;inset:0;background:rgba(28,17,64,.45);z-index:15;
+    }
+    .scrim.show{display:block}
+    .stage{padding:22px 18px 50px}
+    .topbar{padding:14px 18px}
+    .text-card{padding:26px 22px}
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar" aria-label="Indice delle lezioni">
+    <div class="brand">
+      <span class="brand-badge">
+        <img src="logo.jpg" alt="Logo Scuola Sacra Famiglia">
+      </span>
+      <span class="brand-text">
+        <small>Alfabetizzazione</small>
+        <span class="brand-title">iPad · Guida</span>
+      </span>
+    </div>
+    <nav class="nav-scroll" id="navList"></nav>
+    <div class="sidebar-footer">
+      <span class="sf-dot" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3l8 4-8 4-8-4z"/><path d="M6 9.5V14c0 1.7 2.7 3 6 3s6-1.3 6-3V9.5"/><line x1="20" y1="7" x2="20" y2="12.5"/></svg>
+      </span>
+      <span class="sf-text">
+        <small>Animatore Digitale</small>
+        <span class="sf-name">Andrea Cerioli</span>
+        <span class="sf-school">Scuola Sacra Famiglia · Orzinuovi (BS)</span>
+      </span>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" aria-label="Apri il menu delle lezioni">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <span class="chip" id="topChip">01</span>
+      <div>
+        <div class="topbar-title" id="topTitle">—</div>
+        <div class="topbar-sub" id="topSub">Scegli una lezione dalla barra a sinistra</div>
+      </div>
+      <span class="spacer"></span>
+      <div class="topbar-nav">
+        <button id="prevBtn" aria-label="Lezione precedente">
+          <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>
+          <span class="lbl">Precedente</span>
+        </button>
+        <button id="nextBtn" aria-label="Lezione successiva">
+          <span class="lbl">Successiva</span>
+          <svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <article class="lesson" id="lessonView">
+        <div class="video-wrap" id="videoWrap">
+          <div class="video-frame">
+            <video id="player" controls playsinline preload="metadata"
+                   controlslist="nofullscreen noplaybackrate nodownload" disablepictureinpicture></video>
+          </div>
+          <div class="video-meta">
+            <svg viewBox="0 0 24 24"><polygon points="9 7 17 12 9 17 9 7"/><circle cx="12" cy="12" r="10"/></svg>
+            <span>Video breve · tocca play per iniziare</span>
+          </div>
+        </div>
+
+        <div class="guide-panel" id="guidePanel" hidden>
+          <span class="gp-ico" aria-hidden="true"></span>
+          <span class="gp-tag">Scheda guida</span>
+          <span class="gp-text">Argomento spiegato a testo,<br>senza video</span>
+        </div>
+
+        <div class="text-card" id="textCard"></div>
+      </article>
+
+      <section class="gallery" id="galleryView" hidden aria-label="Galleria video Keynote">
+        <div class="gallery-stage" id="galleryStage"></div>
+        <div class="gallery-nav">
+          <button class="gallery-arrow" id="galleryPrev" aria-label="Video precedente">
+            <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>
+          </button>
+          <div class="gallery-dots" id="galleryDots"></div>
+          <button class="gallery-arrow" id="galleryNext" aria-label="Video successivo">
+            <svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19"/></svg>
+          </button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+<script>
+// ---------- Icone SVG (no emoji) ----------
+const ICON = {
+  intro:'<path d="M5 3l14 9-14 9z"/>',
+  gesture:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 11V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-1.5a5 5 0 0 1-4-2l-3-4a1.6 1.6 0 0 1 2.4-2.1L9 13V8.5a1.5 1.5 0 0 1 3 0"/>',
+  home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><rect x="10" y="14" width="4" height="6"/>',
+  aspetto:'<circle cx="13.5" cy="6.5" r="2"/><circle cx="18" cy="11" r="2"/><circle cx="6.5" cy="9" r="2"/><circle cx="8" cy="16" r="2"/><path d="M12 22a10 10 0 1 1 10-10c0 2-1.5 3-3 3h-2a2 2 0 0 0-1.5 3.3A2 2 0 0 1 12 22z"/>',
+  tastiera:'<rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="7" y1="14" x2="17" y2="14"/>',
+  split:'<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/>',
+  file:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  note:'<path d="M5 3h11l4 4v14H5z"/><polyline points="15 3 15 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>',
+  pencil:'<path d="M15 4l5 5-11 11H4v-5z"/><line x1="13" y1="6" x2="18" y2="11"/>',
+  reminders:'<rect x="4" y="5" width="16" height="16" rx="2"/><polyline points="8 12 10.5 14.5 16 9"/><line x1="8" y1="3" x2="8" y2="6"/><line x1="16" y1="3" x2="16" y2="6"/>',
+  calendar:'<rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="8" y1="3" x2="8" y2="6"/><line x1="16" y1="3" x2="16" y2="6"/><circle cx="12" cy="14" r="1.4"/>',
+  calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><rect x="8" y="6" width="8" height="3" rx="1"/><line x1="9" y1="13" x2="9" y2="13"/><line x1="12" y1="13" x2="12" y2="13"/><line x1="15" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="9" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="15" y1="17" x2="15" y2="17"/>',
+  percent:'<line x1="19" y1="5" x2="5" y2="19"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/>',
+  pages:'<path d="M6 3h8l4 4v14H6z"/><polyline points="13 3 13 8 18 8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/>',
+  keynote:'<rect x="3" y="4" width="18" height="12" rx="2"/><line x1="12" y1="16" x2="12" y2="20"/><line x1="8" y1="20" x2="16" y2="20"/><polyline points="7 11 10 8 13 11 17 7"/>',
+  bulb:'<path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 1 4 10.5c-.8.7-1 1.2-1 2.5H9c0-1.3-.2-1.8-1-2.5A6 6 0 0 1 12 3z"/>',
+  magic:'<path d="M12 3v3"/><path d="M12 18v3"/><path d="M3 12h3"/><path d="M18 12h3"/><path d="M5.5 5.5l2 2"/><path d="M16.5 16.5l2 2"/><path d="M18.5 5.5l-2 2"/><path d="M7.5 16.5l-2 2"/><circle cx="12" cy="12" r="3"/>',
+  check:'<polyline points="20 6 9 17 4 12"/>',
+  steps:'<line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.4"/><circle cx="4.5" cy="12" r="1.4"/><circle cx="4.5" cy="18" r="1.4"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+  airdrop:'<path d="M7.5 13.5a6 6 0 0 1 9 0"/><path d="M4.8 10.2a10 10 0 0 1 14.4 0"/><circle cx="12" cy="17.5" r="1.5"/>',
+  appstore:'<rect x="3" y="3" width="18" height="18" rx="5"/><path d="M8.3 16l3.7-7.5L15.7 16"/><line x1="9.6" y1="13.4" x2="14.4" y2="13.4"/>',
+  screenshot:'<path d="M4 8.5V6a2 2 0 0 1 2-2h2.5"/><path d="M15.5 4H18a2 2 0 0 1 2 2v2.5"/><path d="M20 15.5V18a2 2 0 0 1-2 2h-2.5"/><path d="M8.5 20H6a2 2 0 0 1-2-2v-2.5"/><rect x="8.5" y="8.5" width="7" height="7" rx="1.2"/>',
+  share:'<path d="M12 15V4"/><path d="M8.5 7.5L12 4l3.5 3.5"/><path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/>',
+  download:'<path d="M12 4v10"/><path d="M8 10l4 4 4-4"/><path d="M5 19h14"/>',
+  book:'<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20"/>',
+  gallery:'<rect x="2.5" y="5" width="19" height="12" rx="2"/><polygon points="10 8.5 14.5 11 10 13.5"/><line x1="7" y1="20" x2="17" y2="20"/>'
+};
+function svg(name,extra){return '<svg viewBox="0 0 24 24">'+(ICON[name]||'')+'</svg>';}
+
+// ---------- Dati lezioni ----------
+const V='https://dl.dropboxusercontent.com/scl/fi/';
+const LESSONS=[
+{key:'intro',icon:'intro',group:'Per iniziare',
+ title:'Benvenuto nel tuo iPad',
+ eyebrow:'Introduzione',
+ lead:'Un primo sguardo all’iPad: cos’è, come si accende e come si tiene in mano. Da qui parte tutto.',
+ video:V+'alltqls7n7fyjndrunonm/intro.mp4?rlkey=0cn5363pndtvfvyin89h7y79q&raw=1',
+ body:[
+   ['p','L’iPad è un computer a forma di tavoletta: si comanda toccando lo schermo con le dita. Non servono mouse né tastiera fisica per usarlo, anche se puoi collegarli quando vuoi.'],
+   ['h3','steps','I primi gesti'],
+   ['ul',['Per <b>accenderlo</b> premi il tasto in alto finché compare la mela.','Per <b>sbloccarlo</b> appoggia il dito sul tasto o digita il codice.','Per <b>spegnere lo schermo</b> premi una volta il tasto in alto.']],
+   ['tip','Tieni l’iPad con due mani ai lati: è il modo più sicuro per non farlo cadere mentre impari.']
+ ]},
+
+{key:'gesture',icon:'gesture',group:'Le basi',
+ title:'I gesti: parlare con le dita',
+ eyebrow:'Movimenti dello schermo',
+ lead:'L’iPad non ha quasi tasti: si guida con i gesti. Imparare questi movimenti è come imparare l’alfabeto.',
+ video:V+'byz9n3f6hsbsi7gd0upwg/gesture.mp4?rlkey=ftmy11iihk7hifgupbp2adp1j&raw=1',
+ body:[
+   ['p','Ogni movimento delle dita ha un significato preciso. Provali con calma: dopo pochi minuti diventano automatici.'],
+   ['h3','steps','I gesti di base'],
+   ['ul',['<b>Tocca</b>: apri un’app o premi un pulsante.','<b>Tocca e tieni premuto</b>: fa comparire menu e opzioni nascoste.','<b>Scorri</b>: fai scorrere pagine ed elenchi.','<b>Allontana o avvicina due dita</b>: ingrandisci o rimpicciolisci.']],
+   ['h3','spark','Tornare alla schermata Home'],
+   ['p','Scorri verso l’alto dal bordo inferiore dello schermo: chiudi così qualsiasi app e torni alla schermata Home.'],
+   ['h3','split','Passare da un’app all’altra'],
+   ['p','Scorri verso l’alto dal bordo inferiore, fai una pausa al centro dello schermo e solleva il dito: si apre il <b>selettore app</b> con tutte le app aperte. Scorri a destra o a sinistra per scegliere.'],
+   ['tip','Non serve premere forte: l’iPad sente anche un tocco leggero. La delicatezza funziona meglio della forza.']
+ ]},
+
+{key:'home',icon:'home',group:'Le basi',
+ title:'La schermata Home',
+ eyebrow:'Il punto di partenza',
+ lead:'La Home è la “scrivania” dell’iPad: qui trovi tutte le app e da qui raggiungi ogni cosa.',
+ video:V+'cxn6o6tbbpxqdjokbx0lz/home.mp4?rlkey=p4kh3b0v5vywbnac9wyifxoli&raw=1',
+ body:[
+   ['p','Le icone colorate sono le <b>app</b>: piccoli programmi, ognuno con un compito (scrivere, disegnare, fare i conti…). Toccane una per aprirla.'],
+   ['h3','steps','Cosa puoi fare'],
+   ['ul',['<b>Scorri</b> a destra e a sinistra per vedere altre pagine di app.','<b>Tieni premuta</b> un’icona per spostarla o creare una cartella.','In basso c’è il <b>Dock</b>: la barra con le app che usi più spesso.','Scorri verso il basso al centro per <b>cercare</b> un’app per nome.']],
+   ['tip','Se non trovi un’app, usa la ricerca: scrivi le prime lettere del nome e comparirà subito.']
+ ]},
+
+{key:'aspetto',icon:'aspetto',group:'Le basi',
+ title:'Personalizzare l’aspetto',
+ eyebrow:'Sfondo e tema',
+ lead:'L’iPad può vestirsi come piace a te: sfondo, modalità chiara o scura, dimensione dei testi.',
+ video:V+'9qpgfls9t5mcueuw9ee8m/aspetto.mp4?rlkey=bdmtchbtzg0t115x6b2qtieez&raw=1',
+ body:[
+   ['p','Personalizzare non è solo estetica: uno sfondo riposante e testi grandi rendono l’iPad più comodo da usare per ore.'],
+   ['h3','steps','Cosa puoi cambiare'],
+   ['ul',['Lo <b>sfondo</b> della schermata di blocco e della Home.','La <b>modalità scura</b>, più riposante per gli occhi alla sera.','La <b>dimensione del testo</b>, per leggere senza fatica.','La <b>luminosità</b> dello schermo, dal Centro di Controllo.']],
+   ['tip','Tutte queste opzioni si trovano nell’app <b>Impostazioni</b>, l’icona a forma di ingranaggio.']
+ ]},
+
+{key:'tastiera',icon:'tastiera',group:'Le basi',
+ title:'La tastiera sullo schermo',
+ eyebrow:'Scrivere sull’iPad',
+ lead:'Quando serve scrivere, la tastiera compare da sola. Conoscere i suoi trucchi fa risparmiare tempo.',
+ video:V+'xeihzl2byaz7u8u70s9ur/tastiera.mp4?rlkey=5nbhgv4mrh5bgo4ypuqokwx5j&raw=1',
+ body:[
+   ['p','Tocca un punto in cui si può scrivere (per esempio una nota o la barra di ricerca) e la tastiera appare in basso.'],
+   ['h3','steps','Trucchi utili'],
+   ['ul',['Tieni premuto un tasto per vedere le <b>lettere accentate</b> (à, è, ì…).','Tocca <b>123</b> per numeri e simboli, poi <b>ABC</b> per tornare.','La freccia <b>↑</b> (shift) serve per le maiuscole.','Puoi <b>dividere</b> la tastiera o spostarla per scrivere con i pollici.']],
+   ['tip','Per cancellare in fretta tieni premuto il tasto di cancellazione: prima cancella lettere, poi parole intere.']
+ ]},
+
+{key:'split',icon:'split',group:'Le basi',
+ title:'Due app insieme: Split View',
+ eyebrow:'Multitasking',
+ lead:'L’iPad può mostrare due app affiancate: comodissimo per copiare da una parte e scrivere dall’altra.',
+ video:V+'iurazpi10vo1xy7k2itam/spit_screen.mp4?rlkey=uj1237ezao7xp6z80su50z5c1&raw=1',
+ body:[
+   ['p','Con <b>Split View</b> lavori in due app affiancate, una a sinistra e una a destra. Con <b>Slide Over</b> tieni invece una seconda app in una finestrella che galleggia sopra le altre.'],
+   ['h3','steps','Aprire due app affiancate'],
+   ['ul',['In un’app, tocca il <b>pulsante Multitasking</b> (i tre puntini) in alto.','Tocca <b>Split View</b>: l’app si sposta di lato e scopre la schermata Home.','Tocca la seconda app che vuoi mettere accanto.','Trascina la <b>barra centrale</b> per dare più spazio a una delle due.']],
+   ['h3','spark','La finestra che galleggia (Slide Over)'],
+   ['p','Dallo stesso pulsante scegli <b>Slide Over</b>: la seconda app diventa una finestrella che puoi spostare a destra o a sinistra trascinandone il bordo in alto.'],
+   ['tip','Per tornare a una sola app, trascina la barra centrale fino al bordo dello schermo.']
+ ]},
+
+{key:'file',icon:'file',group:'Strumenti',
+ title:'L’app File: il tuo archivio',
+ eyebrow:'Organizzare i documenti',
+ lead:'L’app File è come un grande raccoglitore: qui ritrovi documenti, foto, PDF e lavori salvati.',
+ video:V+'ni7u15yqwxz49jrntfvat/file.mp4?rlkey=4h0dnjgliati1nuzdcreayjh7&raw=1',
+ body:[
+   ['p','Ogni cosa che salvi finisce da qualche parte: l’app <b>File</b> ti permette di ritrovarla e tenerla in ordine in cartelle.'],
+   ['h3','steps','Cosa puoi fare'],
+   ['ul',['<b>Creare cartelle</b> per dividere i lavori per materia.','<b>Cercare</b> un file scrivendone il nome in alto.','<b>Spostare</b> un file tenendolo premuto e trascinandolo.','Aprire i documenti salvati su <b>iCloud</b>, sempre disponibili.']],
+   ['tip','Dai nomi chiari ai tuoi file (es. “storia-roma”): ritrovarli sarà molto più facile.']
+ ]},
+
+{key:'note1',icon:'note',group:'Strumenti',
+ title:'Note · Prima parte',
+ eyebrow:'Scrivere e appuntare',
+ lead:'Note è il quaderno digitale dell’iPad: veloce, sempre pronto e impossibile da perdere.',
+ video:V+'z8fvbih535khdemmzmztc/note1.mp4?rlkey=olq7a3rnp875jhiw5ln7bq47l&raw=1',
+ body:[
+   ['p','Apri Note quando vuoi appuntare un’idea, una consegna o una lista. Tutto si salva da solo.'],
+   ['h3','steps','Le basi'],
+   ['ul',['Tocca l’icona <b>matita su foglio</b> per creare una nota nuova.','La <b>prima riga</b> diventa automaticamente il titolo.','Crea <b>elenchi</b> e <b>caselle da spuntare</b> per le cose da fare.','Le note si organizzano in <b>cartelle</b>, come i quaderni.']],
+   ['tip','Non esiste il tasto “Salva”: l’iPad salva ogni parola da solo, mentre scrivi.']
+ ]},
+
+{key:'note2',icon:'note',group:'Strumenti',
+ title:'Note · Seconda parte',
+ eyebrow:'Funzioni avanzate',
+ lead:'Note non serve solo per scrivere: puoi aggiungere foto, disegni, tabelle e persino scansionare fogli.',
+ video:V+'3ot4ee57pt60jrd40ljmj/note2.mp4?rlkey=llzy0hjydw3pgb250rj28q0ox&raw=1',
+ body:[
+   ['p','Una nota può contenere molto di più del testo: diventa un piccolo collage di tutto ciò che ti serve.'],
+   ['h3','steps','Cosa puoi aggiungere'],
+   ['ul',['<b>Foto e immagini</b> direttamente dentro la nota.','<b>Disegni a mano</b> con il dito o con la Apple Pencil.','<b>Tabelle</b> per ordinare le informazioni.','<b>Scansioni</b> di fogli di carta usando la fotocamera.']],
+   ['tip','Puoi cercare una parola dentro tutte le tue note: ritrovi un appunto anche di mesi fa in un istante.']
+ ]},
+
+{key:'penne',icon:'pencil',group:'Strumenti',
+ title:'Disegnare e scrivere a mano',
+ eyebrow:'Penne e Apple Pencil',
+ lead:'Con le penne digitali puoi scrivere a mano, disegnare e sottolineare proprio come su un foglio vero.',
+ video:V+'usfep5uxflkb7hdddp2c4/penne.mp4?rlkey=1e5794abeco1s5yg6ituax60w&raw=1',
+ body:[
+   ['p','Lo strumento di disegno (lo trovi in Note e in tante app) offre penne diverse, colori e una gomma.'],
+   ['h3','steps','Gli strumenti'],
+   ['ul',['<b>Penna</b> per scrivere con tratto netto.','<b>Evidenziatore</b> per sottolineare con colore trasparente.','<b>Matita</b> per un tratto più morbido.','<b>Gomma</b> e <b>righello</b> per correggere e tracciare linee dritte.']],
+   ['tip','Tocca due volte la Apple Pencil (sui modelli che lo supportano) per passare rapidamente alla gomma.']
+ ]},
+
+{key:'promemoria',icon:'reminders',group:'Organizzarsi',
+ title:'Promemoria: non dimenticare nulla',
+ eyebrow:'Liste e avvisi',
+ lead:'Promemoria ti aiuta a ricordare compiti, scadenze e cose da fare, avvisandoti al momento giusto.',
+ video:V+'icnzx0greg68vlau0tfxy/promemoria.mp4?rlkey=nb79u54owglu5sowzum2866uw&raw=1',
+ body:[
+   ['p','Scrivi cosa devi fare e l’iPad te lo ricorda. È come un’agenda che ti dà un colpetto sulla spalla.'],
+   ['h3','steps','Come usarlo'],
+   ['ul',['Tocca <b>+</b> e scrivi cosa devi ricordare.','Aggiungi una <b>data e un’ora</b> per ricevere l’avviso.','<b>Spunta</b> il pallino quando hai finito un compito.','Raggruppa i promemoria in <b>liste</b> (scuola, casa, sport…).']],
+   ['tip','Crea una lista “Compiti” all’inizio della settimana: ti aiuterà a non perdere nessuna consegna.']
+ ]},
+
+{key:'calendario',icon:'calendar',group:'Organizzarsi',
+ title:'Calendario: organizza il tempo',
+ eyebrow:'Appuntamenti ed eventi',
+ lead:'Il Calendario mette ordine nei tuoi giorni: lezioni, verifiche, gite e impegni, tutto in un colpo d’occhio.',
+ video:V+'byvv2u1a2rgebugs0f36g/calendario.mp4?rlkey=oxezur5bhr7dx7eq82amy04lo&raw=1',
+ body:[
+   ['p','Un evento è un appuntamento con un giorno e un orario. Vederli tutti insieme aiuta a capire come va la settimana.'],
+   ['h3','steps','Come usarlo'],
+   ['ul',['Tocca <b>+</b> per creare un nuovo evento.','Scrivi <b>titolo</b>, <b>giorno</b> e <b>orario</b>.','Cambia vista tra <b>giorno</b>, <b>settimana</b> e <b>mese</b>.','Imposta un <b>avviso</b> per non arrivare in ritardo.']],
+   ['tip','Usa colori diversi per scuola e tempo libero: capirai a colpo d’occhio com’è fatta la tua giornata.']
+ ]},
+
+{key:'calcolatrice',icon:'calc',group:'Numeri',
+ title:'La Calcolatrice',
+ eyebrow:'Fare i conti',
+ lead:'La Calcolatrice dell’iPad fa molto più delle quattro operazioni: è uno strumento potente e ordinato.',
+ video:V+'l413cw3aro8e2dotvfyd4/calcolatrice.mp4?rlkey=w9f2qdkl6br83cncve8i59ipd&raw=1',
+ body:[
+   ['p','Oltre a somma, sottrazione, moltiplicazione e divisione, la Calcolatrice tiene <b>memoria dei calcoli</b> che hai fatto.'],
+   ['h3','steps','Cosa puoi fare'],
+   ['ul',['Eseguire le <b>operazioni</b> di base toccando i tasti.','Vedere la <b>cronologia</b> dei calcoli precedenti.','Passare alla modalità <b>scientifica</b> per calcoli più complessi.','Correggere un numero sbagliato senza ricominciare.']],
+   ['tip','Se sbagli a digitare, cancella solo l’ultima cifra invece di azzerare tutto il calcolo.']
+ ]},
+
+{key:'pages',icon:'pages',group:'Creare',
+ title:'Pages: scrivere documenti',
+ eyebrow:'Testi e relazioni',
+ lead:'Pages è il programma per scrivere documenti belli e ordinati: temi, relazioni, volantini.',
+ video:V+'q1hxyocwscjhtabb3vi2y/pages.mp4?rlkey=m58m8snq9b61205t6eihn314g&raw=1',
+ body:[
+   ['p','Con Pages il testo non resta semplice: puoi sceglierne il carattere, aggiungere immagini e impaginare come un libro.'],
+   ['h3','steps','Le basi'],
+   ['ul',['Scegli un <b>modello</b> già pronto o un foglio bianco.','Cambia <b>carattere</b>, <b>dimensione</b> e <b>colore</b> del testo.','Inserisci <b>immagini</b>, <b>tabelle</b> e <b>forme</b>.','Esporta il documento in <b>PDF</b> per consegnarlo.']],
+   ['tip','Scrivi prima tutto il testo, e solo dopo occupati dell’aspetto: così non perdi il filo dei pensieri.']
+ ]},
+
+{key:'keynote',icon:'keynote',group:'Creare',
+ title:'Keynote: creare presentazioni',
+ eyebrow:'Diapositive ed esposizioni',
+ lead:'Keynote serve a creare presentazioni con diapositive: perfetto per esporre una ricerca alla classe.',
+ video:V+'a507h78b65vh8lpli5ko0/keynote.mp4?rlkey=ytluon2n2e5sd9umq5rt6fi04&raw=1',
+ body:[
+   ['p','Una presentazione è una serie di <b>diapositive</b> che scorrono una dopo l’altra mentre parli. Aiutano a spiegare con ordine.'],
+   ['h3','steps','Come costruirla'],
+   ['ul',['Aggiungi nuove <b>diapositive</b> con il tasto +.','Inserisci <b>titoli</b>, <b>testo</b> e <b>immagini</b> in ciascuna.','Aggiungi <b>transizioni</b> per passare da una all’altra.','Avvia la <b>presentazione</b> a schermo intero per esporre.']],
+   ['tip','Poche parole per diapositiva: le immagini e la tua voce raccontano, il testo non deve dire tutto.']
+ ]},
+
+{key:'keynote-gallery',icon:'gallery',group:'Speciale',type:'gallery',
+ title:'Keynote · Galleria video',
+ videos:[
+   {title:'Progettare slide',id:'cHOLMB1Xv3M',vertical:false},
+   {title:'Testo bordato',id:'bjZesfQueQQ',vertical:true},
+   {title:'10 funzioni',id:'N8dIk89YaUg',vertical:false},
+   {title:'Sfondi',id:'kmuSc9XNNkU',vertical:false},
+   {title:'Transizione',id:'-nf_T_VSZfU',vertical:false},
+   {title:'Animazioni',id:'-JDth3_ME-c',vertical:false},
+   {title:'Animazioni segreti',id:'0G2rXCD-HVI',vertical:false},
+   {title:'Le mie pizze',id:'qcu2iEv8cX4',vertical:false},
+   {title:'Presentazioni old school',id:'rIwQW35RAXE',vertical:false}
+ ]},
+
+{key:'airdrop',icon:'airdrop',group:'Condividere e installare',noVideo:true,
+ title:'AirDrop: condividere senza fili',
+ eyebrow:'Inviare a dispositivi vicini',
+ lead:'Con AirDrop invii foto, video, documenti e altro agli altri dispositivi Apple vicini, senza cavi e senza internet.',
+ source:'support.apple.com · Manuale utente di iPad',
+ body:[
+   ['p','AirDrop usa il Wi-Fi e il Bluetooth per spostare i file da un dispositivo all’altro. I trasferimenti sono protetti: chi riceve può accettare o rifiutare ogni invio.'],
+   ['h3','steps','Prima di iniziare'],
+   ['ul',['Il destinatario deve essere <b>vicino</b>, nel raggio del Bluetooth.','Su entrambi i dispositivi devono essere attivi <b>Wi-Fi</b> e <b>Bluetooth</b>.']],
+   ['h3','share','Inviare un elemento'],
+   ['ul',['Apri l’elemento (una foto, un file…) e tocca il pulsante <b>Condividi</b>.','Tocca <b>AirDrop</b>, poi tocca il dispositivo della persona a cui vuoi inviarlo.','La persona riceve un avviso e tocca <b>Accetta</b> per ricevere.']],
+   ['h3','spark','Scegliere chi può inviarti elementi'],
+   ['p','Apri il <b>Centro di Controllo</b>, tieni premuto il gruppo di comandi in alto a sinistra, poi tocca <b>AirDrop</b>. Scegli <b>Solo contatti</b> oppure <b>Tutti per 10 minuti</b>.'],
+   ['tip','A scuola imposta “Solo contatti” o disattiva AirDrop quando non serve: eviti di ricevere file da sconosciuti.']
+ ]},
+
+{key:'appstore',icon:'appstore',group:'Condividere e installare',noVideo:true,
+ title:'App Store: trovare e installare app',
+ eyebrow:'Il negozio delle app',
+ lead:'Sull’App Store scopri, scarichi e installi nuove app per il tuo iPad: giochi, strumenti per studiare e app per creare.',
+ source:'support.apple.com · Manuale utente di iPad',
+ body:[
+   ['p','L’App Store è il negozio ufficiale delle app. È il posto sicuro da cui prendere i programmi nuovi per l’iPad.'],
+   ['h3','steps','Cercare un’app'],
+   ['ul',['Apri l’<b>App Store</b> e sfoglia le schede <b>Oggi</b>, <b>Giochi</b>, <b>App</b> o <b>Arcade</b>.','Oppure tocca la scheda <b>Cerca</b> e scrivi il nome di ciò che ti serve.']],
+   ['h3','download','Scaricare un’app'],
+   ['ul',['Tocca l’app per vederne descrizione, foto e recensioni.','Tocca <b>Ottieni</b> per le app gratuite, o il <b>prezzo</b> per quelle a pagamento.','Conferma con <b>Face ID</b>, <b>Touch ID</b> o la password dell’ID Apple.']],
+   ['h3','spark','Ritrovare le app'],
+   ['p','Le app scaricate compaiono nella <b>schermata Home</b> e nella <b>Libreria app</b>. Se cancelli un’app, puoi riscaricarla in seguito senza pagarla di nuovo.'],
+   ['tip','A scuola l’installazione potrebbe richiedere il permesso dell’insegnante: chiedi sempre prima di scaricare.']
+ ]},
+
+{key:'screenshot',icon:'screenshot',group:'Per esperti',noVideo:true,
+ title:'Screenshot e Markup',
+ eyebrow:'Catturare e annotare lo schermo',
+ lead:'Uno screenshot è una “foto” di ciò che vedi sullo schermo. Con Markup puoi poi scriverci e disegnarci sopra.',
+ source:'support.apple.com · Manuale utente di iPad',
+ body:[
+   ['p','Lo screenshot serve a salvare una pagina, una consegna o un risultato per rivederlo o condividerlo più tardi.'],
+   ['h3','steps','Acquisire uno screenshot'],
+   ['ul',['Su iPad con <b>Face ID</b>: premi e rilascia insieme il <b>tasto in alto</b> e un <b>tasto del volume</b>.','Su iPad con <b>tasto Home</b>: premi e rilascia insieme il <b>tasto in alto</b> e il <b>tasto Home</b>.','In basso a sinistra compare una piccola <b>anteprima</b>.']],
+   ['h3','pencil','Annotare con Markup'],
+   ['ul',['Tocca l’<b>anteprima</b> in basso a sinistra per aprirla.','Usa gli strumenti di Markup: <b>penna</b>, <b>evidenziatore</b>, <b>matita</b>, <b>gomma</b> e <b>righello</b>.','Scegli colore e spessore del tratto, poi tocca <b>Fine</b>.']],
+   ['h3','spark','Dove si salva'],
+   ['p','Tocca <b>Fine</b> e scegli <b>Salva in Foto</b>: ritrovi lo screenshot nell’app <b>Foto</b>.'],
+   ['tip','Con la Apple Pencil puoi fare uno screenshot trascinando dall’angolo in basso dello schermo e iniziare subito ad annotarlo.']
+ ]},
+
+{key:'trucchi1',icon:'bulb',group:'Per esperti',
+ title:'Trucchi utili · Parte 1',
+ eyebrow:'Diventare più veloci',
+ lead:'Piccoli trucchi che fanno una grande differenza: una volta scoperti, non ne farai più a meno.',
+ video:V+'2vrmgpxm62s4ng7icv7g1/trucchi1.mp4?rlkey=tlgn4dq2bmog3gqd7fuxo5g5f&raw=1',
+ body:[
+   ['p','L’iPad nasconde tante scorciatoie. Conoscerle ti fa lavorare più in fretta e con meno fatica.'],
+   ['h3','steps','Trucchi da provare'],
+   ['ul',['<b>Centro di Controllo</b>: scorri dall’angolo in alto a destra per luminosità e volume.','<b>Schermata</b>: cattura ciò che vedi e salvalo come immagine.','<b>Copia e incolla</b>: tieni premuto, scegli, e sposta il testo dove vuoi.','<b>Cerca ovunque</b>: scorri verso il basso sulla Home per trovare tutto.']],
+   ['tip','Impara un trucco alla volta e usalo per qualche giorno: così resta davvero in memoria.']
+ ]},
+
+{key:'trucchi2',icon:'magic',group:'Per esperti',
+ title:'Trucchi utili · Parte 2',
+ eyebrow:'Ancora più potere',
+ lead:'Altri trucchi per usare l’iPad come un vero esperto, sfruttando funzioni che pochi conoscono.',
+ video:V+'bpva6ll4v7uq8ykz0uhb3/trucchi2.mp4?rlkey=y1l9js2fye4km0nmkwbv5yqbk&raw=1',
+ body:[
+   ['p','Quando le basi sono diventate naturali, questi trucchi ti fanno fare il salto di qualità.'],
+   ['h3','steps','Trucchi avanzati'],
+   ['ul',['<b>Trascina e rilascia</b> testo o immagini tra due app affiancate.','<b>Dettatura</b>: parla e l’iPad scrive al posto tuo.','<b>Gesti rapidi</b> con tre dita per copiare, incollare e annullare.','<b>App in finestra</b> per gestire più cose insieme.']],
+   ['tip','Annulla un errore con un pizzico di tre dita verso sinistra: ripristina con un pizzico verso destra.']
+ ]}
+];
+
+// ---------- Render sidebar ----------
+const navList=document.getElementById('navList');
+let lastGroup=null;
+LESSONS.forEach((l,i)=>{
+  if(l.group!==lastGroup){
+    const g=document.createElement('div');
+    g.className='nav-group-label';
+    g.textContent=l.group;
+    navList.appendChild(g);
+    lastGroup=l.group;
+  }
+  const b=document.createElement('button');
+  b.className='nav-btn';
+  b.dataset.i=i;
+  const badge=l.noVideo?'<span class="guide-tag">guida</span>':(l.type==='gallery'?'<span class="guide-tag special">speciale</span>':'');
+  b.innerHTML='<span class="ico">'+svg(l.icon)+'</span>'+
+    '<span class="btn-label">'+l.title+badge+'</span>'+
+    '<span class="nav-meta"><span class="seen-ico" aria-hidden="true">'+svg('check')+'</span>'+
+    '<span class="num">'+String(i+1).padStart(2,'0')+'</span></span>';
+  b.addEventListener('click',()=>{select(i);closeMenu();});
+  navList.appendChild(b);
+});
+
+// ---------- Render lezione ----------
+const player=document.getElementById('player');
+const textCard=document.getElementById('textCard');
+const topChip=document.getElementById('topChip');
+const topTitle=document.getElementById('topTitle');
+const topSub=document.getElementById('topSub');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+let current=-1;
+
+function buildBody(body){
+  let html='';
+  body.forEach(node=>{
+    const t=node[0];
+    if(t==='p'){html+='<p>'+node[1]+'</p>';}
+    else if(t==='h3'){html+='<h3>'+svg(node[1])+'<span>'+node[2]+'</span></h3>';}
+    else if(t==='ul'){html+='<ul>'+node[1].map(li=>'<li>'+li+'</li>').join('')+'</ul>';}
+    else if(t==='tip'){html+='<div class="tip">'+svg('bulb')+'<div><b>Consiglio</b><span>'+node[1]+'</span></div></div>';}
+  });
+  return html;
+}
+
+const viewed=new Set(); // solo di sessione — nessun localStorage (lab condiviso)
+const videoWrap=document.getElementById('videoWrap');
+const guidePanel=document.getElementById('guidePanel');
+const lessonView=document.getElementById('lessonView');
+const galleryView=document.getElementById('galleryView');
+const galleryStage=document.getElementById('galleryStage');
+const galleryDots=document.getElementById('galleryDots');
+const galleryPrev=document.getElementById('galleryPrev');
+const galleryNext=document.getElementById('galleryNext');
+let galleryData=null,gIndex=0;
+
+function markViewed(i){
+  if(viewed.has(i))return;
+  viewed.add(i);
+  const btn=document.querySelector('.nav-btn[data-i="'+i+'"]');
+  if(btn)btn.classList.add('is-seen');
+}
+
+function ytEmbed(id){return 'https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?rel=0&modestbranding=1&fs=0&disablekb=1&iv_load_policy=3&playsinline=1&enablejsapi=1';}
+function showGalleryItem(n){
+  if(!galleryData)return;
+  gIndex=(n+galleryData.length)%galleryData.length;
+  const v=galleryData[gIndex];
+  galleryStage.innerHTML='<div class="gallery-frame '+(v.vertical?'v':'h')+'">'+
+    '<iframe src="'+ytEmbed(v.id)+'" title="'+v.title+'" loading="lazy" '+
+    'allow="autoplay; encrypted-media"><\/iframe></div>';
+  [...galleryDots.children].forEach((d,i)=>d.classList.toggle('active',i===gIndex));
+}
+function buildGallery(l){
+  galleryData=l.videos;gIndex=0;
+  galleryDots.innerHTML='';
+  l.videos.forEach((v,i)=>{
+    const d=document.createElement('button');
+    d.className='gallery-dot';d.textContent=(i+1);
+    d.setAttribute('aria-label','Video '+(i+1)+': '+v.title);
+    d.addEventListener('click',()=>showGalleryItem(i));
+    galleryDots.appendChild(d);
+  });
+  showGalleryItem(0);
+}
+galleryPrev.addEventListener('click',()=>showGalleryItem(gIndex-1));
+galleryNext.addEventListener('click',()=>showGalleryItem(gIndex+1));
+
+function setActiveNav(i){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',Number(b.dataset.i)===i));
+  prevBtn.disabled=(i===0);
+  nextBtn.disabled=(i===LESSONS.length-1);
+  markViewed(i);
+  const act=document.querySelector('.nav-btn.active');
+  if(act)act.scrollIntoView({block:'nearest'});
+}
+
+function select(i){
+  if(i<0||i>=LESSONS.length)return;
+  current=i;
+  const l=LESSONS[i];
+
+  if(l.type==='gallery'){
+    player.pause();player.removeAttribute('src');player.load();
+    lessonView.hidden=true;
+    galleryView.hidden=false;
+    buildGallery(l);
+    topChip.textContent=String(i+1).padStart(2,'0');
+    topTitle.textContent=l.title;
+    topSub.textContent='Lezione '+(i+1)+' di '+LESSONS.length+' · '+l.group;
+    setActiveNav(i);
+    return;
+  }
+
+  galleryView.hidden=true;
+  galleryStage.innerHTML=''; // ferma l'eventuale video YouTube
+  lessonView.hidden=false;
+
+  if(l.noVideo){
+    player.pause();
+    player.removeAttribute('src');
+    player.load();
+    videoWrap.hidden=true;
+    guidePanel.hidden=false;
+    guidePanel.querySelector('.gp-ico').innerHTML=svg(l.icon);
+  }else{
+    guidePanel.hidden=true;
+    videoWrap.hidden=false;
+    player.pause();
+    player.src=l.video;
+    player.load();
+  }
+  const src=l.source||'support.apple.com · Manuale utente di iPad';
+  const sourceLine='<p class="source">'+svg('book')+'Fonte: '+src+'</p>';
+  textCard.innerHTML=
+    '<div class="eyebrow">'+svg('spark')+l.eyebrow+'</div>'+
+    '<h2>'+l.title+'</h2>'+
+    '<p class="lead">'+l.lead+'</p>'+
+    buildBody(l.body)+sourceLine;
+  topChip.textContent=String(i+1).padStart(2,'0');
+  topTitle.textContent=l.title;
+  topSub.textContent='Lezione '+(i+1)+' di '+LESSONS.length+' · '+l.group;
+  textCard.scrollTop=0;
+  setActiveNav(i);
+}
+prevBtn.addEventListener('click',()=>select(current-1));
+nextBtn.addEventListener('click',()=>select(current+1));
+
+// ---------- Menu mobile ----------
+const sidebar=document.getElementById('sidebar');
+const scrim=document.getElementById('scrim');
+const menuToggle=document.getElementById('menuToggle');
+function openMenu(){sidebar.classList.add('open');scrim.classList.add('show');}
+function closeMenu(){sidebar.classList.remove('open');scrim.classList.remove('show');}
+menuToggle.addEventListener('click',openMenu);
+scrim.addEventListener('click',closeMenu);
+
+// ---------- Vincoli sul player: niente fullscreen, PiP o cambio velocità ----------
+function lockRate(){ if(player.playbackRate!==1) player.playbackRate=1; }
+player.addEventListener('ratechange',lockRate);
+player.addEventListener('play',lockRate);
+function exitFs(){
+  const d=document;
+  if(d.fullscreenElement===player||d.webkitFullscreenElement===player){
+    (d.exitFullscreen||d.webkitExitFullscreen||function(){}).call(d);
+  }
+}
+player.addEventListener('webkitbeginfullscreen',()=>{ try{player.webkitExitFullscreen&&player.webkitExitFullscreen();}catch(e){} });
+document.addEventListener('fullscreenchange',exitFs);
+document.addEventListener('webkitfullscreenchange',exitFs);
+// blocca doppio-tap/pizzico per ingrandire il video
+['dblclick','gesturestart'].forEach(ev=>player.addEventListener(ev,e=>e.preventDefault()));
+
+// ---------- Avvio: primo video = intro ----------
+select(0);
+</script>
+</body>
+</html>
